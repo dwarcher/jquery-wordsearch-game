@@ -90,6 +90,12 @@
                 wordlist : null,
 				gridsize : 10
             },
+			_mapEventToCell: function(event) {
+                var currentColumn = Math.ceil((event.pageX - this._cellX) / this._cellWidth);
+                var currentRow = Math.ceil((event.pageY - this._cellY) / this._cellHeight);
+                var el = $('#rf-tablegrid tr:nth-child('+currentRow+') td:nth-child('+currentColumn+')');
+                return el;
+			},
             
             _create : function () {
                 //member variables
@@ -97,13 +103,18 @@
                 this.startedAt  = new Root();
                 this.hotzone    = new Hotzone();
                 this.arms       = new Arms();
+				
                 
 				GameWidgetHelper.renderGame(this.element[0],this.model);
 				
 				this.options.distance=0; // set mouse option property
                 this._mouseInit();
                 
-                
+                var cell = $('#rf-tablegrid tr:first td:first');
+        this._cellWidth = cell.outerWidth();
+        this._cellHeight = cell.outerHeight();
+        this._cellX = cell.offset().left;
+        this._cellY = cell.offset().top;
             },//_create
             
             destroy : function () {
@@ -140,7 +151,7 @@
             },
             
             _mouseDrag : function(event) {
-                
+                event.target = this._mapEventToCell(event); 
                 //if this.root - clear out everything and return to orignal clicked state
                 if (this.startedAt.isSameCell(event.target)) {
                     this.arms.returnToNormal();
