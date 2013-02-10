@@ -19,8 +19,15 @@
 //		$(document).ready( function () {
 //		var words = "earth,mars,mercury,neptune,pluto,saturn,jupiter,one,two,
 //		        three,four,five,six,seven,eight,mozart,bach,meyer,rose,mahler";
-//		$("#theGrid").wordsearchwidget({"wordlist" : words,"gridsize" : 12});
-//	});
+//		$("#theGrid").wordsearchwidget({"wordlist" : words,"gridsize" : 12, 
+//		onWordFound: function(object){
+//		alert(object.word);
+//		},
+//		onWordSearchComplete: function(){
+//			alert("Game over");
+//		}
+//		});
+//		});
 //	
 //  -------
 //  Inputs: 
@@ -79,16 +86,32 @@
 //			Objects related to the controller
 //			1) GameWidgetHelper 		
 //			
-//			
+//	
+//  -------
+//  Events: 
+//  -------		
+//	onWordFound:
+//		This event is called whenever a user finds a word in the list. The function passes an object with two properties:
+//			id: The index of the word in the list
+//			word: The name of the word found.
+//
+//	onWordSearchComplete:
+//		This event is called when all the words in the list have been found and the game ends.
 //==============================================================================
 
 (function( $, undefined ) {
-    
+	
+    var currentWord = 0;	
+	var maxWords = 0;
+	var encontrePalabra = undefined;
+	var cuandoEncuentreTodas = undefined;
     $.widget("ryanf.wordsearchwidget", $.ui.mouse, {
 
             options : {
                 wordlist : null,
-				gridsize : 10
+				gridsize : 10,
+				onWordFound: undefined,
+				onWordSearchComplete: undefined
             },
             
             _create : function () {
@@ -97,6 +120,10 @@
                 this.startedAt  = new Root();
                 this.hotzone    = new Hotzone();
                 this.arms       = new Arms();
+                
+                encontrePalabra = this.options.onWordFound;
+				cuandoEncuentreTodas = this.options.onWordSearchComplete;
+				maxWords = this.options.wordlist.split(",").length;
                 
 				GameWidgetHelper.renderGame(this.element[0],this.model);
 				
@@ -1294,6 +1321,19 @@ var GameWidgetHelper = {
 	signalWordFound : function(idx) {
 		var w = $("li").get(idx);
 		Visualizer.signalWordFound(w);
+		
+		currentWord++;
+		if (typeof encontrePalabra == "function"){
+				encontrePalabra({id:idx,word:$(w).text()});
+				
+			}
+
+		if (typeof cuandoEncuentreTodas == "function"){
+				if (currentWord >= maxWords){
+					cuandoEncuentreTodas({});
+					
+				}
+			}
 	}
 	
 }
