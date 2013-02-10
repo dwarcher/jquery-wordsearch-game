@@ -1319,7 +1319,7 @@ var GameWidgetHelper = {
     },
 	
 	signalWordFound : function(idx) {
-		var w = $("li").get(idx);
+		var w = $("#theGrid li").get(idx);
 		Visualizer.signalWordFound(w);
 		
 		currentWord++;
