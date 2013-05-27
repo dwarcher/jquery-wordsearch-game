@@ -1320,20 +1320,18 @@ var GameWidgetHelper = {
 	
 	signalWordFound : function(idx) {
 		var w = $("#theGrid li").get(idx);
-		Visualizer.signalWordFound(w);
-		
-		currentWord++;
-		if (typeof encontrePalabra == "function"){
-				encontrePalabra({id:idx,word:$(w).text()});
-				
-			}
-
-		if (typeof cuandoEncuentreTodas == "function"){
-				if (currentWord >= maxWords){
-					cuandoEncuentreTodas({});
-					
+		if (!jQuery(w).hasClass('rf-foundword')){
+			Visualizer.signalWordFound(w);
+			currentWord++;
+			if (typeof encontrePalabra == "function"){
+					encontrePalabra({id:idx,word:$(w).text()});
 				}
-			}
+			if (typeof cuandoEncuentreTodas == "function"){
+					if (currentWord >= maxWords){
+						cuandoEncuentreTodas({});
+					}
+				}
+			}	
 	}
 	
 }
